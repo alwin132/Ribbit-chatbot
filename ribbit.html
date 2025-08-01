@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🐸 RibbitGPT</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url('images2.jpg'); /* Ensure this image is in the same directory or use a correct relative path */
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+      text-shadow: 1px 1px 4px #000;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #chatbox {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 10px #000;
+    }
+    #chatlog {
+      height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: #222;
+      border-radius: 10px;
+      color: lightgreen;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 5px;
+      border-radius: 5px;
+    }
+    input {
+      width: 70%;
+      border: none;
+    }
+    button {
+      background-color: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🐸 RibbitGPT Chatbot</h1>
+  <div id="chatbox">
+    <div id="chatlog"></div>
+    <input id="userInput" placeholder="Say something stupid..." />
+    <button onclick="handleChat()">Send</button>
+  </div>
+
+  <audio id="ribbitSound" src="audio/ribbit.mp3.unknown" preload="auto"></audio>
+
+  <script>
+    const chatlog = document.getElementById("chatlog");
+    const ribbitSound = document.getElementById("ribbitSound");
+    const inputBox = document.getElementById("userInput");
+
+    const categories = {
+      default: [
+        "Ribbit. You're like a broken pencil — pointless.",
+        "You bring the same energy as a soggy crouton. Ribbit.",
+        "Even the flies avoid you. Ribbit.",
+        "You're like a puzzle with no edge pieces. Ribbit.",
+        "You're like a puzzle with no edge pieces. Ribbit.",
+    "Ribbit. Your IQ is buffering.",
+    "You have something on your chin... no, the third one. Ribbit.",
+    "You bring a ruler to measure personality. It’s still zero. Ribbit.",
+    "You're the human version of a pop-up ad. Ribbit.",
+    "Ribbit. If being clueless was an Olympic sport, you'd medal every time.",
+    "You're as useful as a waterproof teabag. Ribbit.",
+    "You type like you’re wearing oven mitts. Ribbit.",
+    "You're so slow, your WiFi gave up on you. Ribbit.",
+    "You once tripped over a wireless connection. Ribbit.",
+    "You're the reason the swamp has a ‘No Diving’ sign. Ribbit.",
+    "Even tadpoles laugh at your decisions. Ribbit.",
+    "You're like a wet sock. Unexpected, uncomfortable, and nobody wants you around. Ribbit.",
+    "Ribbit. You have the confidence of a frog trying to drive a car.",
+    "You're like a software update—annoying, unnecessary, and always at the wrong time. Ribbit.",
+    "You’ve got two left feet and both are in your mouth. Ribbit.",
+    "Your thoughts have the loading speed of dial-up. Ribbit.",
+    "You could get lost in a straight hallway. Ribbit.",
+    "Your brain is running on power-saving mode. Ribbit.",
+    "Ribbit. You make spellcheck cry."
+      ],
+      brag: [
+        "Wow, you did that all by yourself? Ribbit. Want a sticker?",
+        "You flex harder than your brain ever has. Ribbit.",
+        "Ribbit. If ego was a fuel, you'd still be stuck on the lily pad.",
+        "Wow, you did that all by yourself? Ribbit. Want a sticker?",
+  "Ribbit. If ego was a fuel, you’d still be stuck on the lily pad.",
+  "Flexing that? Even snails are unimpressed. Ribbit.",
+  "That’s not a flex, that’s a cramp. Ribbit.",
+  "You brag like you just invented the wheel. Spoiler: you didn’t. Ribbit.",
+  "Congratulations on the bare minimum. Ribbit.",
+  "You act like you solved world peace — you just submitted a form. Ribbit.",
+  "Ribbit. You brag more than you backspace.",
+  "Achievement unlocked: Delusions of grandeur. Ribbit.",
+  "Ribbit. You post one line of code and call yourself a developer.",
+  "That’s your accomplishment? Even the flies are laughing. Ribbit.",
+  "You boast like your password is 'password123'. Ribbit.",
+  "You sound like someone who screenshots their Spotify wrapped. Ribbit.",
+  "Ribbit. Your humblebrag isn't humble or impressive.",
+  "You flex harder than your brain ever has. Ribbit.",
+  "You're like a frog bragging about not getting eaten. Ribbit.",
+  "Ribbit. If your skill matched your ego, you'd actually be useful.",
+  "You brag like you just found CTRL+C. Ribbit.",
+  "Flex less. Croak more. Ribbit."
+      ],
+      confused: [
+        "Ribbit. You’ve got that ‘loading...’ look again.",
+        "Even my tadpoles understand faster. Ribbit.",
+        "You’re staring so hard, I can hear the gears rust. Ribbit.",
+        "Ribbit. You look lost. Want a breadcrumb trail?",
+  "Your brain’s on airplane mode again. Ribbit.",
+  "Confused? Even your thoughts need GPS. Ribbit.",
+  "You look at life like it’s written in JavaScript. Ribbit.",
+  "You're so confused, even the mirror shook its head. Ribbit.",
+  "Ribbit. You’ve got that ‘loading...’ look again.",
+  "Confused? You make a frog on caffeine look focused. Ribbit.",
+  "Even my tadpoles understand faster. Ribbit.",
+  "You’ve got the same expression as a frog in algebra class. Ribbit.",
+  "You're trying so hard... to understand nothing. Ribbit.",
+  "Ribbit. Ever thought of turning yourself off and on again?",
+  "You look like you just tried to divide by zero. Ribbit.",
+  "Confused is your default setting. Ribbit.",
+  "You're like a riddle, wrapped in a question, dunked in a swamp. Ribbit.",
+  "You’re staring so hard, I can hear the gears rust. Ribbit.",
+  "Ribbit. I’d offer help, but even the pond has limits.",
+  "If confusion were a sport, you’d podium every time. Ribbit.",
+  "Ribbit. You ever open a fridge and forget why? That’s your vibe.",
+  "You’ve got the logic of a wet paper straw. Ribbit."
+      ],
+      questions: [
+        "You really typed that and hit enter? Ribbit.",
+        "Ribbit. I'm not a search engine, I'm a frog with attitude.",
+        "You ask like you're trying to speedrun confusion. Ribbit.",
+        "You ask questions like Google owes you money. Ribbit.",
+  "Ribbit. I'm not a search engine, I'm a frog with attitude.",
+  "Asking me? Even your shadow walks away. Ribbit.",
+  "Every question you ask reduces my pond’s IQ. Ribbit.",
+  "You're one question away from a pop quiz on common sense. Ribbit.",
+  "Ribbit. That question was so bad even the crickets went silent.",
+  "Is that a real question or just another cry for help? Ribbit.",
+  "You ask more questions than a toddler on espresso. Ribbit.",
+  "Ribbit. I’d answer, but I value my brain cells.",
+  "You ask like you're trying to speedrun confusion. Ribbit.",
+  "Ribbit. That question made me forget how to croak.",
+  "You ever think before you ask, or do you just let the wind type for you?",
+  "Questions like yours make me wish I had eyelids to roll. Ribbit.",
+  "That question? Straight out of the ‘Don’t Ask’ swamp. Ribbit.",
+  "Ribbit. Even an 8-ball would've said 'Try again later.'",
+  "You have questions. I have regrets. Ribbit.",
+  "I’d answer, but then we’d both be wrong. Ribbit."
+      ]
+    };
+
+    function getCategory(input) {
+      const lower = input.toLowerCase();
+      if (lower.match(/\b(how|why|can|should|what|where|who|when)\b/) || lower.includes("?")) return "questions";
+      if (lower.includes("i did") || lower.includes("i made") || lower.includes("look what i")) return "brag";
+      if (lower.includes("help") || lower.includes("explain") || lower.includes("huh") || lower.includes("confuse")) return "confused";
+      return "default";
+    }
+
+    function getRoast(category, input) {
+      const list = categories[category] || categories.default;
+      const roast = list[Math.floor(Math.random() * list.length)];
+      return roast + " (" + getMockWisdom(input) + ")";
+    }
+
+    function getMockWisdom(input) {
+      const gibberish = [
+        "Try rubbing two brain cells together.",
+        "That's like asking a rock for advice.",
+        "The answer's inside you. Deep, deep down. Like, buried.",
+        "Have you tried... not being like this?"
+      ];
+      if (input.toLowerCase().includes("math") || input.toLowerCase().includes("code")) {
+        return "Honestly? Just blame JavaScript.";
+      }
+      return gibberish[Math.floor(Math.random() * gibberish.length)];
+    }
+
+    function printMessage(sender, message) {
+      const bubble = `<div><strong>${sender}:</strong> ${message}</div>`;
+      chatlog.innerHTML += bubble;
+      chatlog.scrollTop = chatlog.scrollHeight;
+    }
+
+    function handleChat() {
+      const input = inputBox.value.trim();
+      if (!input) return;
+
+      printMessage("You", input);
+      inputBox.value = "";
+
+      const category = getCategory(input);
+      const roast = getRoast(category, input);
+
+      setTimeout(() => {
+        printMessage("RibbitGPT", roast);
+        ribbitSound.play();
+      }, 800);
+    }
+
+    inputBox.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        handleChat();
+      }
+    });
+  </script>
+</body>
+</html>
