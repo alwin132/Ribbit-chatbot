@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ribbit Chat 🐸</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://media.giphy.com/media/12uXi1GXBibALC/giphy.gif'); /* Frog image */
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-shadow: 1px 1px 3px black;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Click the hello to chat with Ribbit.....</h1>
+  <button onclick="goToChat()">hello</button>
+
+  <script>
+    function goToChat() {
+      // Redirect to the page you're still creating (e.g., chat.html)
+      window.location.href = "ribbit.html";
+    }
+  </script>
+
+</body>
+</html>
